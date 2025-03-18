@@ -1,6 +1,8 @@
 
 export type StackParamList = {
   HomeTabs: undefined;
+  Login: undefined;
+  Register: undefined;
   TrainListing: { 
     source: string;
     destination: string;
@@ -11,11 +13,13 @@ export type StackParamList = {
   TrainDetails: { id: string };
   Booking: undefined;
   TrainSchedules: undefined;
-  TicketManagement: undefined;
+  TicketManagement: undefined | { bookingId?: string };
   SeatAvailability: undefined;
   Notifications: undefined;
   TravelHistory: undefined;
   NotFound: undefined;
+  PnrStatus: undefined;
+  TrainSearch: undefined;
 };
 
 export type TabParamList = {

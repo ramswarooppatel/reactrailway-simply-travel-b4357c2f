@@ -54,8 +54,19 @@ export const getSession = async (): Promise<AuthSession | null> => {
   try {
     const { data, error } = await supabase.auth.getSession();
     if (error || !data.session) return null;
+    
+    // Ensure the user object has required properties
+    const user = data.session.user;
+    if (!user) return null;
+    
     return {
-      user: data.session.user,
+      user: {
+        id: user.id,
+        email: user.email || '',
+        user_metadata: {
+          name: user.user_metadata?.name,
+        },
+      },
       session: data.session,
     };
   } catch (error) {

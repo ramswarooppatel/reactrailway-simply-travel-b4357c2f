@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { 
   View, 
@@ -124,7 +123,7 @@ const Profile = () => {
             <Ionicons name="chevron-forward" size={20} color={colors.grey} />
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('PnrStatus')}>
+          <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('HomeTabs', { screen: 'PnrStatus' })}>
             <Ionicons name="search-outline" size={24} color={colors.primary} />
             <Text style={styles.settingText}>PNR Status</Text>
             <Ionicons name="chevron-forward" size={20} color={colors.grey} />
@@ -183,7 +182,7 @@ const Profile = () => {
                 
                 <TouchableOpacity 
                   style={styles.viewTicketButton}
-                  onPress={() => navigation.navigate('TicketManagement', { bookingId: booking.id })}
+                  onPress={() => navigation.navigate('TicketManagement')}
                 >
                   <Text style={styles.viewTicketButtonText}>View Ticket</Text>
                 </TouchableOpacity>
@@ -196,7 +195,7 @@ const Profile = () => {
             <Text style={styles.emptyBookingsText}>No bookings found</Text>
             <TouchableOpacity 
               style={styles.bookNowButton}
-              onPress={() => navigation.navigate('TrainSearch')}
+              onPress={() => navigation.navigate('HomeTabs', { screen: 'TrainSearch' })}
             >
               <Text style={styles.bookNowButtonText}>Book a Train</Text>
             </TouchableOpacity>

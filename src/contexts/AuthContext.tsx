@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { AuthSession, getSession, signIn, signOut, signUp } from '../lib/auth';
 import { supabase } from '../lib/supabase';
@@ -25,12 +26,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Set up a subscription for auth state changes
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (event, sessionData) => {
         console.log(`Supabase auth event: ${event}`);
-        if (session) {
+        if (sessionData && sessionData.user) {
           const authSession: AuthSession = {
-            user: session.user,
-            session,
+            user: {
+              id: sessionData.user.id,
+              email: sessionData.user.email || '',
+              user_metadata: {
+                name: sessionData.user.user_metadata?.name,
+              },
+            },
+            session: sessionData,
           };
           setSession(authSession);
         } else {
