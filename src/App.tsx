@@ -30,7 +30,6 @@ const Tab = createBottomTabNavigator();
 function HomeTabs() {
   return (
     <Tab.Navigator
-      id="HomeTabNavigator"
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
@@ -81,8 +80,7 @@ const App = () => {
       <SafeAreaProvider>
         <NavigationContainer>
           <StatusBar style="auto" />
-          <Stack.Navigator 
-            id="MainStackNavigator"
+          <Stack.Navigator
             initialRouteName="HomeTabs"
           >
             <Stack.Screen 

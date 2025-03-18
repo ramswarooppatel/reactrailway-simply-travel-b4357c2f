@@ -1,10 +1,10 @@
+
 import React, { useEffect, useState } from 'react';
 import { 
   View, 
   Text, 
   StyleSheet, 
   TouchableOpacity, 
-  Image, 
   ScrollView,
   Alert,
   ActivityIndicator
@@ -123,7 +123,7 @@ const Profile = () => {
             <Ionicons name="chevron-forward" size={20} color={colors.grey} />
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('HomeTabs', { screen: 'PnrStatus' })}>
+          <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('PnrStatus')}>
             <Ionicons name="search-outline" size={24} color={colors.primary} />
             <Text style={styles.settingText}>PNR Status</Text>
             <Ionicons name="chevron-forward" size={20} color={colors.grey} />
@@ -182,7 +182,7 @@ const Profile = () => {
                 
                 <TouchableOpacity 
                   style={styles.viewTicketButton}
-                  onPress={() => navigation.navigate('TicketManagement')}
+                  onPress={() => navigation.navigate('TicketManagement', { bookingId: booking.id })}
                 >
                   <Text style={styles.viewTicketButtonText}>View Ticket</Text>
                 </TouchableOpacity>
@@ -195,7 +195,7 @@ const Profile = () => {
             <Text style={styles.emptyBookingsText}>No bookings found</Text>
             <TouchableOpacity 
               style={styles.bookNowButton}
-              onPress={() => navigation.navigate('HomeTabs', { screen: 'TrainSearch' })}
+              onPress={() => navigation.navigate('TrainSearch')}
             >
               <Text style={styles.bookNowButtonText}>Book a Train</Text>
             </TouchableOpacity>

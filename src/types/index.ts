@@ -1,6 +1,6 @@
 
 export type StackParamList = {
-  HomeTabs: undefined;
+  HomeTabs: undefined | { screen?: string; params?: any };
   Login: undefined;
   Register: undefined;
   TrainListing: { 
