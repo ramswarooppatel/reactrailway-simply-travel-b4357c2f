@@ -1,22 +1,28 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, fontSize } from '../styles/theme';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { colors } from '../styles/theme';
+import { StackParamList } from '../types';
+
+type NotFoundNavigationProp = NativeStackNavigationProp<StackParamList>;
 
 const NotFound = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NotFoundNavigationProp>();
+
+  useEffect(() => {
+    console.error(
+      "404 Error: User attempted to access non-existent route"
+    );
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Ionicons name="alert-circle-outline" size={80} color={colors.grey} />
-        <Text style={styles.title}>Page Not Found</Text>
-        <Text style={styles.message}>
-          The page you're looking for doesn't exist or has been moved.
-        </Text>
+      <View style={styles.center}>
+        <Text style={styles.errorCode}>404</Text>
+        <Text style={styles.errorMessage}>Oops! Page not found</Text>
         <TouchableOpacity 
           style={styles.button}
           onPress={() => navigation.navigate('HomeTabs')}
@@ -33,33 +39,31 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  content: {
+  center: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: spacing.xl,
+    padding: 20,
   },
-  title: {
-    fontSize: fontSize.xxl,
+  errorCode: {
+    fontSize: 64,
     fontWeight: 'bold',
-    marginVertical: spacing.lg,
+    marginBottom: 10,
   },
-  message: {
-    fontSize: fontSize.md,
+  errorMessage: {
+    fontSize: 18,
     color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: spacing.xl,
+    marginBottom: 20,
   },
   button: {
     backgroundColor: colors.primary,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.xl,
-    borderRadius: 30,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
   },
   buttonText: {
     color: colors.white,
-    fontSize: fontSize.md,
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
 });
 

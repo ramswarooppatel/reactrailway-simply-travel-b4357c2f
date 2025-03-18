@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { AuthProvider } from './contexts/AuthContext';
 
 // Import screens
 import Index from './screens/Index';
@@ -20,6 +21,8 @@ import SeatAvailability from './screens/SeatAvailability';
 import Notifications from './screens/Notifications';
 import TravelHistory from './screens/TravelHistory';
 import NotFound from './screens/NotFound';
+import Login from './screens/Login';
+import Register from './screens/Register';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -27,7 +30,6 @@ const Tab = createBottomTabNavigator();
 function HomeTabs() {
   return (
     <Tab.Navigator
-      id="HomeTabs"
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
@@ -74,30 +76,33 @@ function HomeTabs() {
 
 const App = () => {
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <StatusBar style="auto" />
-        <Stack.Navigator 
-          id="RootStack"
-          initialRouteName="HomeTabs"
-        >
-          <Stack.Screen 
-            name="HomeTabs" 
-            component={HomeTabs} 
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen name="TrainListing" component={TrainListing} />
-          <Stack.Screen name="TrainDetails" component={TrainDetails} />
-          <Stack.Screen name="Booking" component={Booking} />
-          <Stack.Screen name="TrainSchedules" component={TrainSchedules} />
-          <Stack.Screen name="TicketManagement" component={TicketManagement} />
-          <Stack.Screen name="SeatAvailability" component={SeatAvailability} />
-          <Stack.Screen name="Notifications" component={Notifications} />
-          <Stack.Screen name="TravelHistory" component={TravelHistory} />
-          <Stack.Screen name="NotFound" component={NotFound} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <AuthProvider>
+      <SafeAreaProvider>
+        <NavigationContainer>
+          <StatusBar style="auto" />
+          <Stack.Navigator 
+            initialRouteName="HomeTabs"
+          >
+            <Stack.Screen 
+              name="HomeTabs" 
+              component={HomeTabs} 
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Register" component={Register} />
+            <Stack.Screen name="TrainListing" component={TrainListing} />
+            <Stack.Screen name="TrainDetails" component={TrainDetails} />
+            <Stack.Screen name="Booking" component={Booking} />
+            <Stack.Screen name="TrainSchedules" component={TrainSchedules} />
+            <Stack.Screen name="TicketManagement" component={TicketManagement} />
+            <Stack.Screen name="SeatAvailability" component={SeatAvailability} />
+            <Stack.Screen name="Notifications" component={Notifications} />
+            <Stack.Screen name="TravelHistory" component={TravelHistory} />
+            <Stack.Screen name="NotFound" component={NotFound} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </AuthProvider>
   );
 };
 
