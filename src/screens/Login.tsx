@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -7,7 +7,11 @@ import {
   TextInput, 
   TouchableOpacity, 
   ActivityIndicator,
-  Alert 
+  Image,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Alert
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -21,108 +25,157 @@ type LoginNavigationProp = NativeStackNavigationProp<StackParamList>;
 
 const Login = () => {
   const navigation = useNavigation<LoginNavigationProp>();
-  const { signIn } = useAuth();
+  const { signIn, session } = useAuth();
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // If user is already logged in, redirect to home
+    if (session?.user) {
+      navigation.navigate('HomeTabs');
+    }
+  }, [session]);
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      setError('Please enter both email and password');
       return;
     }
-
+    
     setIsLoading(true);
+    setError(null);
+    
     try {
       const { error } = await signIn(email, password);
+      
       if (error) throw error;
-      navigation.navigate('HomeTabs');
-    } catch (error) {
-      Alert.alert('Login Failed', error.message || 'An unexpected error occurred');
+      
+      // Navigation will happen automatically due to the useEffect above
+    } catch (error: any) {
+      console.error('Login error:', error);
+      setError(error.message || 'Failed to login. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleForgotPassword = () => {
+    // In a real app, navigate to a password reset screen
+    Alert.alert('Reset Password', 'Password reset functionality will be available soon!');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Welcome Back!</Text>
-          <Text style={styles.subtitle}>Sign in to your account</Text>
-        </View>
-
-        <View style={styles.form}>
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Email</Text>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardAvoidingView}
+      >
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+          </TouchableOpacity>
+          
+          <View style={styles.logoContainer}>
+            <Ionicons name="train" size={64} color={colors.primary} />
+            <Text style={styles.appName}>RailConnect</Text>
+          </View>
+          
+          <Text style={styles.title}>Welcome Back</Text>
+          <Text style={styles.subtitle}>Sign in to continue</Text>
+          
+          {error && (
+            <View style={styles.errorContainer}>
+              <Ionicons name="alert-circle-outline" size={20} color={colors.danger} />
+              <Text style={styles.errorText}>{error}</Text>
+            </View>
+          )}
+          
+          <View style={styles.formContainer}>
             <View style={styles.inputContainer}>
               <Ionicons name="mail-outline" size={20} color={colors.grey} style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Your email address"
+                placeholder="Email"
                 value={email}
                 onChangeText={setEmail}
-                autoCapitalize="none"
                 keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
               />
             </View>
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Password</Text>
+            
             <View style={styles.inputContainer}>
               <Ionicons name="lock-closed-outline" size={20} color={colors.grey} style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Your password"
+                placeholder="Password"
                 value={password}
                 onChangeText={setPassword}
-                secureTextEntry={!isPasswordVisible}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+                autoCorrect={false}
               />
               <TouchableOpacity 
-                onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-                style={styles.eyeIcon}
+                onPress={() => setShowPassword(!showPassword)}
+                style={styles.passwordToggle}
               >
                 <Ionicons 
-                  name={isPasswordVisible ? "eye-off-outline" : "eye-outline"} 
+                  name={showPassword ? "eye-off-outline" : "eye-outline"} 
                   size={20} 
                   color={colors.grey} 
                 />
               </TouchableOpacity>
             </View>
+            
+            <TouchableOpacity 
+              onPress={handleForgotPassword}
+              style={styles.forgotPasswordContainer}
+            >
+              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.loginButton}
+              onPress={handleLogin}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ActivityIndicator color={colors.white} />
+              ) : (
+                <Text style={styles.loginButtonText}>Sign In</Text>
+              )}
+            </TouchableOpacity>
           </View>
-
-          <TouchableOpacity style={styles.forgotPassword}>
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.loginButton}
-            onPress={handleLogin}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <ActivityIndicator color={colors.white} />
-            ) : (
-              <Text style={styles.loginButtonText}>Sign In</Text>
-            )}
-          </TouchableOpacity>
-
-          <View style={styles.divider}>
-            <View style={styles.dividerLine} />
+          
+          <View style={styles.dividerContainer}>
+            <View style={styles.divider} />
             <Text style={styles.dividerText}>OR</Text>
-            <View style={styles.dividerLine} />
+            <View style={styles.divider} />
           </View>
-
+          
+          <TouchableOpacity style={styles.socialButton}>
+            <Ionicons name="logo-google" size={20} color={colors.textPrimary} style={styles.socialIcon} />
+            <Text style={styles.socialButtonText}>Continue with Google</Text>
+          </TouchableOpacity>
+          
           <View style={styles.registerContainer}>
             <Text style={styles.registerText}>Don't have an account? </Text>
             <TouchableOpacity onPress={() => navigation.navigate('Register')}>
               <Text style={styles.registerLink}>Sign Up</Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -132,13 +185,36 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  content: {
+  keyboardAvoidingView: {
     flex: 1,
-    padding: spacing.xl,
-    justifyContent: 'center',
   },
-  header: {
+  scrollContent: {
+    flexGrow: 1,
+    padding: spacing.xl,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.white,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: spacing.xl,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: spacing.xl,
+  },
+  appName: {
+    fontSize: fontSize.xl,
+    fontWeight: 'bold',
+    color: colors.primary,
+    marginTop: spacing.sm,
   },
   title: {
     fontSize: fontSize.xxl,
@@ -148,71 +224,99 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: fontSize.md,
     color: colors.textSecondary,
+    marginBottom: spacing.xl,
   },
-  form: {
-    marginTop: spacing.lg,
-  },
-  inputGroup: {
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.danger + '15',
+    padding: spacing.md,
+    borderRadius: 8,
     marginBottom: spacing.lg,
   },
-  label: {
+  errorText: {
+    color: colors.danger,
     fontSize: fontSize.sm,
-    fontWeight: '500',
-    marginBottom: spacing.xs,
+    marginLeft: spacing.sm,
+    flex: 1,
+  },
+  formContainer: {
+    marginBottom: spacing.xl,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: colors.white,
+    borderRadius: 8,
+    paddingHorizontal: spacing.md,
+    marginBottom: spacing.md,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 8,
-    backgroundColor: colors.white,
   },
   inputIcon: {
-    marginLeft: spacing.md,
+    marginRight: spacing.sm,
   },
   input: {
     flex: 1,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.sm,
+    height: 50,
     fontSize: fontSize.md,
   },
-  eyeIcon: {
-    padding: spacing.md,
+  passwordToggle: {
+    padding: spacing.sm,
   },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginBottom: spacing.lg,
+  forgotPasswordContainer: {
+    alignItems: 'flex-end',
+    marginBottom: spacing.xl,
   },
   forgotPasswordText: {
     color: colors.primary,
     fontSize: fontSize.sm,
+    fontWeight: '600',
   },
   loginButton: {
     backgroundColor: colors.primary,
-    paddingVertical: spacing.md,
     borderRadius: 8,
+    paddingVertical: spacing.md,
     alignItems: 'center',
-    marginTop: spacing.md,
   },
   loginButtonText: {
     color: colors.white,
     fontSize: fontSize.md,
     fontWeight: 'bold',
   },
-  divider: {
+  dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: spacing.xl,
   },
-  dividerLine: {
+  divider: {
     flex: 1,
     height: 1,
     backgroundColor: colors.border,
   },
   dividerText: {
-    paddingHorizontal: spacing.md,
+    marginHorizontal: spacing.md,
     color: colors.textSecondary,
+    fontSize: fontSize.sm,
+  },
+  socialButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.white,
+    borderRadius: 8,
+    paddingVertical: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginBottom: spacing.lg,
+  },
+  socialIcon: {
+    marginRight: spacing.md,
+  },
+  socialButtonText: {
+    fontSize: fontSize.md,
+    color: colors.textPrimary,
+    fontWeight: '600',
   },
   registerContainer: {
     flexDirection: 'row',
@@ -220,12 +324,12 @@ const styles = StyleSheet.create({
     marginTop: spacing.lg,
   },
   registerText: {
-    color: colors.textSecondary,
     fontSize: fontSize.md,
+    color: colors.textSecondary,
   },
   registerLink: {
-    color: colors.primary,
     fontSize: fontSize.md,
+    color: colors.primary,
     fontWeight: 'bold',
   },
 });

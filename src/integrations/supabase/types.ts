@@ -72,6 +72,53 @@ export type Database = {
         }
         Relationships: []
       }
+      bookings: {
+        Row: {
+          class: string
+          created_at: string
+          id: string
+          journey_date: string
+          passengers: Json
+          pnr_number: string
+          status: string
+          total_fare: number
+          train_id: string
+          user_id: string
+        }
+        Insert: {
+          class: string
+          created_at?: string
+          id?: string
+          journey_date: string
+          passengers: Json
+          pnr_number: string
+          status: string
+          total_fare: number
+          train_id: string
+          user_id: string
+        }
+        Update: {
+          class?: string
+          created_at?: string
+          id?: string
+          journey_date?: string
+          passengers?: Json
+          pnr_number?: string
+          status?: string
+          total_fare?: number
+          train_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_train_id_fkey"
+            columns: ["train_id"]
+            isOneToOne: false
+            referencedRelation: "trains"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_messages: {
         Row: {
           created_at: string | null
@@ -349,6 +396,33 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          phone_number: string | null
+          preferred_language: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id: string
+          phone_number?: string | null
+          preferred_language?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          phone_number?: string | null
+          preferred_language?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       projects: {
         Row: {
           created_at: string | null
@@ -457,6 +531,27 @@ export type Database = {
         }
         Relationships: []
       }
+      stations: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       test: {
         Row: {
           created_at: string
@@ -469,6 +564,75 @@ export type Database = {
         Update: {
           created_at?: string
           id?: number
+        }
+        Relationships: []
+      }
+      trains: {
+        Row: {
+          ac2tier_availability: string
+          ac2tier_price: number
+          ac3tier_availability: string
+          ac3tier_price: number
+          acfirstclass_availability: string
+          acfirstclass_price: number
+          arrival_time: string
+          created_at: string
+          departure_time: string
+          distance: number
+          duration: string
+          from_code: string
+          from_station: string
+          id: string
+          name: string
+          number: string
+          sleeper_availability: string
+          sleeper_price: number
+          to_code: string
+          to_station: string
+        }
+        Insert: {
+          ac2tier_availability: string
+          ac2tier_price: number
+          ac3tier_availability: string
+          ac3tier_price: number
+          acfirstclass_availability: string
+          acfirstclass_price: number
+          arrival_time: string
+          created_at?: string
+          departure_time: string
+          distance: number
+          duration: string
+          from_code: string
+          from_station: string
+          id?: string
+          name: string
+          number: string
+          sleeper_availability: string
+          sleeper_price: number
+          to_code: string
+          to_station: string
+        }
+        Update: {
+          ac2tier_availability?: string
+          ac2tier_price?: number
+          ac3tier_availability?: string
+          ac3tier_price?: number
+          acfirstclass_availability?: string
+          acfirstclass_price?: number
+          arrival_time?: string
+          created_at?: string
+          departure_time?: string
+          distance?: number
+          duration?: string
+          from_code?: string
+          from_station?: string
+          id?: string
+          name?: string
+          number?: string
+          sleeper_availability?: string
+          sleeper_price?: number
+          to_code?: string
+          to_station?: string
         }
         Relationships: []
       }
